@@ -265,7 +265,7 @@ uninstall_shell() {
 
 # 下载文件
 download() {
-	wget -L -O "$1?$(date +%s)" -o $2
+	wget -L -O "$2" "$1?$(date +%s)"
 }
 
 install_shell
