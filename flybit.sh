@@ -152,7 +152,7 @@ display_menu() {
 	echo $LINE
 	success "当前脚本版本: $VERSION"
 	if [[ "1" != "${status_code}" ]]; then
-		server_version=$("$FLYBIT_HOME/flybit-agent" test 2>&1)
+		server_version=$("$FLYBIT_HOME/flybit-agent" version 2>&1)
 		success "当前服务版本: $server_version"
 		if [[ "2" = "${status_code}" ]]; then
 			err "服务未启动"
