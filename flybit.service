@@ -1,0 +1,16 @@
+[Unit]
+Description=Flybit Agent Service
+Documentation=https://github.com/FlyBitVIP/FlyBit-Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/flybit
+ExecStart=/opt/flybit/flybit-agent
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
