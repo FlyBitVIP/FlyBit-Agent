@@ -7,7 +7,9 @@ FLYBIT_HOME=/opt/flybit
 # 脚本下载地址
 SHELL_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.sh
 # 程序下载地址
-AGENT_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.sh
+AGENT_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit-agent.tar.gz
+# Service下载地址
+SERVICE_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.service
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -56,12 +58,65 @@ check_env() {
 
 # 安装服务
 install() {
+	# 检查环境
 	check_env
+	
+	# 创建文件夹
+	info "创建文件夹"
+	mkdir -p $FLYBIT_HOME
+	cd $FLYBIT_HOME
+	success "创建文件夹成功"
+	echo $LINE
+	
+	# 下载文件
+	info "开始下载文件"
+	wget -O flybit-agent.tar.gz $AGENT_URL
+	wget -O /etc/systemd/system/flybit.service SERVICE_URL
+	success "下载成功"
+	echo $LINE
+	
+	# 解压缩到运行目录
+	info "开始解压缩"
+	tar -xzvf flybit-agent.tar.gz
+	success "解压成功"
+	echo $LINE
+	
+	# 删除压缩文件
+	rm -f flybit-agent.tar.gz
+	success "删除临时文件成功"
+	
+	# 设置root用户拥有读取权限
+	chmod 644 /etc/systemd/system/flybit.service
+	chmod +x $FLYBIT_HOME/flybit-agent
+	systemctl daemon-reload
+	success "设置文件权限成功"
+	
+	# 设置开机启动
+	systemctl enable flybit
+	
+	# 启动服务
+	systemctl start flybit
 }
 
 # 卸载
 uninstall() {
-	err "开始卸载"
+	info "开始卸载"
+	# 关闭开机启动
+	systemctl disable flybit
+	info "关闭开机启动成功"
+	# 关闭服务
+	systemctl stop flybit
+	info "关闭服务成功"
+	# 删除服务
+	rm -f /etc/systemd/system/flybit.service
+	info "删除服务成功"
+	# 删除文件夹
+	rm -rf $FLYBIT_HOME
+	info "删除文件夹成功"
+	# 卸载脚本
+	uninstall_shell
+	echo $LINE
+	success "已彻底卸载服务（一个文件不留）"
 }
 
 # 显示菜单
@@ -158,8 +213,8 @@ install_shell() {
 uninstall_shell() {
 	rm -rf /usr/bin/flybit
 	echo ""
-	info "卸载成功！"
-	info "重新安装命令: wget -O /usr/bin/flybit $SHELL_URL&&chmod +x /usr/bin/flybit&&flybit"
+	info "卸载脚本成功！"
+	info "重新安装脚本命令: wget -O /usr/bin/flybit $SHELL_URL&&chmod +x /usr/bin/flybit&&flybit"
 }
 
 install_shell
