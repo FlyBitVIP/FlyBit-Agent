@@ -68,8 +68,8 @@ install() {
 	echo $LINE
 	
 	# 下载文件
-	wget -O flybit-agent.tar.gz $AGENT_URL
-	wget -O /etc/systemd/system/flybit.service $SERVICE_URL
+	wget –no-cache -O flybit-agent.tar.gz $AGENT_URL
+	wget –no-cache -O /etc/systemd/system/flybit.service $SERVICE_URL
 	echo $LINE
 	success "下载成功"
 	echo $LINE
@@ -193,7 +193,7 @@ open_shell() {
 
 # 更新脚本
 upgrade_shell() {
-	wget -O /usr/bin/flybit $SHELL_URL
+	wget –no-cache -O /usr/bin/flybit $SHELL_URL
 	success "更新成功"
 	chmod +x /usr/bin/flybit
 	open_shell
@@ -222,7 +222,7 @@ uninstall_shell() {
 	rm -rf /usr/bin/flybit
 	echo ""
 	info "卸载脚本成功！"
-	info "重新安装脚本命令: wget -O /usr/bin/flybit $SHELL_URL&&chmod +x /usr/bin/flybit&&flybit"
+	info "重新安装脚本命令: wget –no-cache -O /usr/bin/flybit $SHELL_URL&&chmod +x /usr/bin/flybit&&flybit"
 }
 
 install_shell
