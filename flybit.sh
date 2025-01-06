@@ -1,13 +1,19 @@
 #!/bin/bash
 
+# 当前版本信息
 VERSION=V20250106
+# 工作目录
 FLYBIT_HOME=/opt/flybit
+# 脚本下载地址
+SHELL_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.sh
+# 程序下载地址
+AGENT_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.sh
 
 red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
-LINE="========================="
+LINE="=================================="
 
 # 输出红色
 err() {
@@ -32,8 +38,6 @@ check_flybit_service() {
 # 检查脚本是否安装
 check_flybit_shell() {
 	test -e "/usr/bin/flybit"
-	# [ -e "/usr/bin/flybit" ] && echo true || echo false
-	# return command -v "flybit" 
 }
 
 # 检查依赖
@@ -91,8 +95,7 @@ display_menu() {
 # 处理用户输入
 deal_userinput () {
 	# 等待用户输入
-	echo -en "请输入你的选择: "
-	read -p "请输入你的选择:"  choice
+	read -p "请输入你的选择: "  choice
 	echo $LINE
 	# 可以根据用户的选择执行不同的操作
 	case "$choice" in
@@ -101,7 +104,7 @@ deal_userinput () {
 		3) echo "你选择了查看状态" ;;
 		4) echo "你选择了查看日志" ;;
 		7) uninstall_shell ;;
-		8) echo "你选择了更新脚本" ;;
+		8) upgrade_shell ;;
 		9)  
 			if check_flybit_service;then
 				uninstall
@@ -110,11 +113,24 @@ deal_userinput () {
 			fi
 			;;
 		0) 
-			echo "退出。"
+			info "退出"
 			exit 0
 			;;
 		*) echo "无效的选择。" &&  display_menu;;
 	esac
+}
+
+# 更新脚本
+upgrade_shell() {
+	wget -O /usr/bin/flybit $SHELL_URL
+	success "更新成功"
+	chmod +x /usr/bin/flybit
+	for((i=3;i>0;i--));do
+		echo -ne "\r$i 秒后进入脚本";
+		sleep 1
+	done
+	flybit
+	exit 0
 }
 
 # 安装脚本
@@ -125,7 +141,7 @@ install_shell() {
 			info "正在安装脚本"
 			SHELL_FOLDER=$(dirname $(readlink -f "$0"))
 			cp "$SHELL_FOLDER/${0##*/}" /usr/bin/flybit
-			chmod 755 /usr/bin/flybit
+			chmod +x /usr/bin/flybit
 			success "成功安装脚本到/usr/bin/flybit！"
 			success "输入flybit即可运行脚本"
 			for((i=3;i>0;i--));do
@@ -143,7 +159,7 @@ uninstall_shell() {
 	rm -rf /usr/bin/flybit
 	echo ""
 	info "卸载成功！"
-	info "重新安装命令: "
+	info "重新安装命令: wget -O /usr/bin/flybit $SHELL_URL&&chmod +x /usr/bin/flybit&&flybit"
 }
 
 install_shell
