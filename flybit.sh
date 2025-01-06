@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 当前版本信息
-VERSION=V20250106
+VERSION="20250106"
 # 工作目录
 FLYBIT_HOME=/opt/flybit
 # 脚本下载地址
@@ -150,10 +150,10 @@ display_menu() {
 	get_service_status "flybit"
 	status_code=$?
 	echo $LINE
-	success "当前脚本版本: $VERSION"
+	success "当前脚本版本: V$VERSION"
 	if [[ "1" != "${status_code}" ]]; then
 		server_version=$("$FLYBIT_HOME/flybit-agent" version 2>&1)
-		success "当前服务版本: $server_version"
+		success "当前服务版本: V$server_version"
 		if [[ "2" = "${status_code}" ]]; then
 			err "服务未启动"
 		else
@@ -174,8 +174,8 @@ display_menu() {
 	success "4. 查看日志"
 	success ""
 	if check_flybit_shell;then
-		err "7. 卸载脚本"
-		success "8. 更新脚本"
+		success "7. 更新脚本"
+		err "8. 卸载脚本"
 	fi
 	if [[ "1" = "${status_code}" ]]; then
 		success "9. 安装服务"
@@ -195,15 +195,15 @@ deal_userinput () {
 	echo $LINE
 	# 可以根据用户的选择执行不同的操作
 	case "$choice" in
-		1) systemctl start flybit && deal_userinput ;;
-		2) systemctl stop flybit && deal_userinput ;;
-		3) deal_userinput ;;
+		1) systemctl start flybit && display_menu ;;
+		2) systemctl stop flybit && display_menu ;;
+		3) display_menu ;;
 		4) 
 			clear
 			tail -fn 30 $FLYBIT_HOME/logs/info.log
 			;;
-		7) uninstall_shell ;;
-		8) upgrade_shell ;;
+		7) upgrade_shell ;;
+		8) uninstall_shell ;;
 		9)  
 			if [[ "1" == "${status_code}" ]]; then
 				install
