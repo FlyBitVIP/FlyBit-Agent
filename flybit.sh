@@ -62,16 +62,15 @@ install() {
 	check_env
 	
 	# 创建文件夹
-	info "创建文件夹"
 	mkdir -p $FLYBIT_HOME
 	cd $FLYBIT_HOME
 	success "创建文件夹成功"
 	echo $LINE
 	
 	# 下载文件
-	info "开始下载文件"
 	wget -O flybit-agent.tar.gz $AGENT_URL
 	wget -O /etc/systemd/system/flybit.service $SERVICE_URL
+	echo $LINE
 	success "下载成功"
 	echo $LINE
 	
@@ -162,7 +161,7 @@ deal_userinput () {
 		1) echo "你选择了开始服务" ;;
 		2) echo "你选择了停止服务" ;;
 		3) echo "你选择了查看状态" ;;
-		4) echo "你选择了查看日志" ;;
+		4) tail -fn 30 $FLYBIT_HOME/logs/info.log ;;
 		7) uninstall_shell ;;
 		8) upgrade_shell ;;
 		9)  
