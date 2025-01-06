@@ -71,7 +71,7 @@ install() {
 	# 下载文件
 	info "开始下载文件"
 	wget -O flybit-agent.tar.gz $AGENT_URL
-	wget -O /etc/systemd/system/flybit.service SERVICE_URL
+	wget -O /etc/systemd/system/flybit.service $SERVICE_URL
 	success "下载成功"
 	echo $LINE
 	
@@ -96,6 +96,11 @@ install() {
 	
 	# 启动服务
 	systemctl start flybit
+	
+	echo $LINE
+	success "已成功安装并启动服务"
+	echo $LINE
+	open_shell
 }
 
 # 卸载
@@ -175,16 +180,21 @@ deal_userinput () {
 	esac
 }
 
-# 更新脚本
-upgrade_shell() {
-	wget -O /usr/bin/flybit $SHELL_URL
-	success "更新成功"
-	chmod +x /usr/bin/flybit
+# 倒计时进入脚本
+open_shell() {
 	for((i=3;i>0;i--));do
 		echo -ne "\r$i 秒后进入脚本";
 		sleep 1
 	done
 	flybit
+}
+
+# 更新脚本
+upgrade_shell() {
+	wget -O /usr/bin/flybit $SHELL_URL
+	success "更新成功"
+	chmod +x /usr/bin/flybit
+	open_shell
 	exit 0
 }
 
@@ -199,11 +209,7 @@ install_shell() {
 			chmod +x /usr/bin/flybit
 			success "成功安装脚本到/usr/bin/flybit！"
 			success "输入flybit即可运行脚本"
-			for((i=3;i>0;i--));do
-				echo -ne "\r$i 秒后进入脚本";
-				sleep 1
-			done
-			flybit
+			open_shell
 			exit 0
 		fi
 	fi
