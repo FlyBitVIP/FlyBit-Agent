@@ -32,11 +32,6 @@ info() {
 	printf "${yellow}%s${plain}\n" "$*"
 }
 
-# 检查是否安装flybit服务
-check_flybit_service() {
-	return command -v "flybit" >/dev/null 2>&1
-}
-
 # 检查脚本是否安装
 check_flybit_shell() {
 	test -e "/usr/bin/flybit"
@@ -123,27 +118,69 @@ uninstall() {
 	success "已彻底卸载服务（一个文件不留）"
 }
 
+# 获取服务状态
+# 未安装返回 1
+# 未启动返回 2
+# 运行中返回 3
+get_service_status() {
+	local service_name="$1"
+	# 检查 /opt/flybit/flybit-agent 文件是否存在
+	if [ ! -f "$FLYBIT_HOME/flybit-agent" ]; then
+		return "1"
+	fi
+	# 检查服务是否已安装
+	if ! systemctl is-enabled "$service_name" > /dev/null 2>&1; then
+		# 如果 systemctl is-enabled 返回非 0，则认为未安装
+		return "1"
+	fi
+	# 检查服务是否正在运行
+	if systemctl is-active --quiet "$service_name"; then
+		# 如果 systemctl is-active 返回 0，则服务正在运行
+		return "3"
+	else
+		# 如果 systemctl is-active 返回非 0，则服务未运行
+		return "2"
+	fi
+}
+
 # 显示菜单
 display_menu() {
 	clear
+	# 输出版本和状态信息
+	get_service_status "flybit"
+	status_code=$?
 	echo $LINE
-	success "当前版本: $VERSION"
+	success "当前脚本版本: $VERSION"
+	if [[ "1" != "${status_code}" ]]; then
+		server_version=$("$FLYBIT_HOME/flybit-agent" test 2>&1)
+		success "当前服务版本: $server_version"
+		if [[ "2" = "${status_code}" ]]; then
+			err "服务未启动"
+		else
+			success "服务运行中"
+		fi
+	else
+		err "未安装服务"
+	fi
+	
+	# 命令信息
 	echo $LINE
 	info "请选择操作："
 	echo $LINE
+	
 	success "1. 开始服务"
 	success "2. 停止服务"
-	success "3. 查看状态"
+	success "3. 更新状态"
 	success "4. 查看日志"
 	success ""
 	if check_flybit_shell;then
 		err "7. 卸载脚本"
 		success "8. 更新脚本"
 	fi
-	if check_flybit_service;then
-		err "9. 卸载服务"
-	else
+	if [[ "1" = "${status_code}" ]]; then
 		success "9. 安装服务"
+	else
+		err "9. 卸载服务"
 	fi
 	success ""
 	err "0. 退出"
@@ -158,9 +195,9 @@ deal_userinput () {
 	echo $LINE
 	# 可以根据用户的选择执行不同的操作
 	case "$choice" in
-		1) echo "你选择了开始服务" ;;
-		2) echo "你选择了停止服务" ;;
-		3) echo "你选择了查看状态" ;;
+		1) systemctl start flybit && deal_userinput ;;
+		2) systemctl stop flybit && deal_userinput ;;
+		3) deal_userinput ;;
 		4) 
 			clear
 			tail -fn 30 $FLYBIT_HOME/logs/info.log
@@ -168,10 +205,10 @@ deal_userinput () {
 		7) uninstall_shell ;;
 		8) upgrade_shell ;;
 		9)  
-			if check_flybit_service;then
-				uninstall
-			else
+			if [[ "1" == "${status_code}" ]]; then
 				install
+			else
+				uninstall
 			fi
 			;;
 		0) 
