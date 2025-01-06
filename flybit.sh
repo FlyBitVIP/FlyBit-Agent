@@ -9,7 +9,7 @@ SHELL_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.
 # 程序下载地址
 AGENT_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit-agent.tar.gz
 # Service下载地址
-SERVICE_URL=https://raw.githubusercontent.com//FlyBitVIP/FlyBit-Agent/main/flybit.service
+SERVICE_URL=https://raw.githubusercontent.com/FlyBitVIP/FlyBit-Agent/main/flybit.service
 
 red='\033[0;31m'
 green='\033[0;32m'
