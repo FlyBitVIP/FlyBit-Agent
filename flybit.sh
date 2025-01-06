@@ -161,7 +161,10 @@ deal_userinput () {
 		1) echo "你选择了开始服务" ;;
 		2) echo "你选择了停止服务" ;;
 		3) echo "你选择了查看状态" ;;
-		4) tail -fn 30 $FLYBIT_HOME/logs/info.log ;;
+		4) 
+			clear
+			tail -fn 30 $FLYBIT_HOME/logs/info.log
+			;;
 		7) uninstall_shell ;;
 		8) upgrade_shell ;;
 		9)  
