@@ -7,7 +7,7 @@ FLYBIT_HOME=/opt/flybit
 # 脚本下载地址
 SHELL_URL=https://raw.githubusercontent.com/FlyBitVIP/FlyBit-Agent/main/flybit.sh
 # 程序下载地址
-AGENT_URL=https://raw.githubusercontent.com/FlyBitVIP/FlyBit-Agent/main/flybit-agent.tar.gz
+AGENT_URL=https://media.githubusercontent.com/media/FlyBitVIP/FlyBit-Agent/refs/heads/main/flybit-agent.tar.gz?download=true
 # Service下载地址
 SERVICE_URL=https://raw.githubusercontent.com/FlyBitVIP/FlyBit-Agent/main/flybit.service
 
@@ -163,7 +163,13 @@ uninstall() {
 	rm -rf $FLYBIT_HOME
 	info "删除文件夹成功"
 	echo $LINE
-	success "卸载成功"
+	if [ $# -eq 0 ]; then
+	    success "卸载成功"
+  	  exit 0;
+  	else
+      TEMP_MSG="卸载成功"
+      display_menu
+  	fi
 }
 
 # 获取服务状态
@@ -297,7 +303,7 @@ deal_userinput () {
 			if [[ "1" == "${status_code}" ]]; then
 				install 1
 			else
-				uninstall
+				uninstall 1
 			fi
 			;;
 	  10)
