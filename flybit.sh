@@ -301,7 +301,7 @@ deal_userinput () {
 			fi
 			;;
 	  10)
-	    wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh"
+	    wget -N --no-check-certificate http://sh.xdmb.xyz/tcp.sh
 	    chmod +x tcp.sh
 	    ./tcp.sh
 	    rm -f ./tcp.sh
