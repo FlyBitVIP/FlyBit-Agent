@@ -501,6 +501,10 @@ else
         else
           success "当前状态：服务运行中"
         fi
+        echo $LINE
+        success "日志目录：$FLYBIT_HOME/logs/"
+        success "配置路劲：$FLYBIT_HOME/config/"
+        echo $LINE
       else
         err "当前状态：未安装服务"
       fi
