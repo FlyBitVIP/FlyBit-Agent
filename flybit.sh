@@ -252,7 +252,8 @@ display_menu() {
 	success ""
 	info "0. 退出"
 	echo $LINE
-	if [ $TEMP_MSG ]; then
+	if [ ! -n "$TEMP_MSG" ]; then
+#	if [ $TEMP_MSG ]; then
 		echo $TEMP_MSG
 		unset TEMP_MSG
 		echo $LINE
@@ -337,11 +338,12 @@ display_config() {
   echo ""
   info "0. 返回上一级"
   echo $LINE
-  if [ $TEMP_MSG ]; then
-  		echo $TEMP_MSG
-  		unset TEMP_MSG
-  		echo $LINE
-  	fi
+  if [ ! -n "$TEMP_MSG" ]; then
+  #  if [ $TEMP_MSG ]; then
+    echo $TEMP_MSG
+    unset TEMP_MSG
+    echo $LINE
+  fi
   # 等待用户输入
   read -p "请输入你的选择: "  choice
   echo $LINE
@@ -433,6 +435,7 @@ help() {
   success "* 交互操作： flybit"
   echo $LINE
   success "* 查看信息： flybit info"
+  success "* 查看版本： flybit version"
   success "* 查看帮助： flybit help"
   success "* 查看日志： flybit log"
   success "* 清空日志： flybit clear"
@@ -481,6 +484,10 @@ else
     "logs"|'log')
       clear
       tail -fn 30 $FLYBIT_HOME/logs/info.log
+      ;;
+    "version"|"-v")
+      server_version=$("$FLYBIT_HOME/flybit-agent" version 2>&1)
+      echo "$server_version"
       ;;
     "info"|"-i")
       clear
