@@ -496,6 +496,7 @@ else
       if [[ "1" != "${status_code}" ]]; then
         server_version=$("$FLYBIT_HOME/flybit-agent" version 2>&1)
         success "当前服务版本: V$server_version"
+        echo $LINE
         if [[ "2" = "${status_code}" ]]; then
           err "当前状态：服务未启动"
         else
@@ -504,7 +505,6 @@ else
         echo $LINE
         success "日志目录：$FLYBIT_HOME/logs/"
         success "配置路劲：$FLYBIT_HOME/config/"
-        echo $LINE
       else
         err "当前状态：未安装服务"
       fi
