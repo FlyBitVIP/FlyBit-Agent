@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 当前版本信息
-VERSION="20250106"
+VERSION=20250131
 # 工作目录
 FLYBIT_HOME=/opt/flybit
 # 脚本下载地址
